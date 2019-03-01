@@ -46,7 +46,7 @@ Float_t amp[nchan];
 Float_t risetime[nchan];
 Float_t LP2_30[nchan];
 Float_t gaus_mean[nchan];
-Int_t ptkidx[nlgad];
+Int_t ptkidx[nlgad] = {0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,2};
 Int_t chidx[nlgad];
 Float_t y_dut[3];
 Float_t x_dut[3];
@@ -288,7 +288,7 @@ for(int i=0;i<nentries;i++){
 	if(nhits==0) continue;
 	if(channel<0) cout<<"Channel value doesn't make sense"<<endl;
 	int index = chidx[channel];
-	int ptkindex = ptkidx[channel];
+	int ptkindex = ptkidx[channel];//cout << ptkindex << endl;
 
 	v_h_amp[0]->Fill(x_adjust,y_adjust,amp[index]);
 	v_h_run[0]->Fill(x_adjust,y_adjust,run);
@@ -301,12 +301,13 @@ for(int i=0;i<nentries;i++){
 
 	if(ptkindex>=0){
 		float delta_t = -LP2_30[index]+gaus_mean[ptkindex];
+		//cout << delta_t <<endl;
 		if(delta_t<0) continue;
 		v_h_time[0]->Fill(x_adjust,y_adjust,delta_t);
 		if(run<run_boundaries[0]) v_h_time[1]->Fill(x_adjust,y_adjust,delta_t);
 		if(run>run_boundaries[1]) v_h_time[2]->Fill(x_adjust,y_adjust,delta_t);
-		//if (amp[index] < 80)
-			//v_h_time[1]->Fill(x_adjust,y_adjust,delta_t);
+		if (amp[index] < 80)
+		  v_h_time[1]->Fill(x_adjust,y_adjust,delta_t);
 	}
 
 }
@@ -650,7 +651,7 @@ void InitBranches(){
   t->SetBranchStatus("x_corr", 1);
   t->SetBranchStatus("ntracks", 1);
   t->SetBranchStatus("run", 1);
-  t->SetBranchStatus("ptkidx", 1);
+  //t->SetBranchStatus("ptkidx", 1);
   t->SetBranchStatus("chidx", 1);
   t->SetBranchStatus("risetime", 1);
 	t->SetBranchStatus("LP2_30", 1);	
@@ -669,7 +670,7 @@ void InitBranches(){
    	t->SetBranchAddress("chi2", &chi2);
 	t->SetBranchAddress("ntracks", &ntracks);
 	t->SetBranchAddress("run", &run);
-	t->SetBranchAddress("ptkidx", &ptkidx);
+	//t->SetBranchAddress("ptkidx", &ptkidx);
 	t->SetBranchAddress("chidx", &chidx);
 
 }
